@@ -6,5 +6,7 @@ namespace BaseClasses.OnScenePoints
     {
         public float Interval;
         public GameObject MoveTarget;
+        public float Speed;
+        public int MaxHp;
     }
 }

@@ -1,16 +1,11 @@
-﻿using System.Threading.Tasks;
-using Infrastructure.GameBootstrapper;
+﻿using Infrastructure.GameBootstrapper;
 using Infrastructure.GameStateMachine;
 using Infrastructure.Services.AssetProviderService;
-using Infrastructure.Services.CoroutineRunner;
 using Infrastructure.Services.GameFactory;
 using Infrastructure.Services.SceneLoader;
 using Infrastructure.Services.SceneLoaderService;
 using Infrastructure.Services.StaticData;
 using Infrastructure.Services.StaticDataService;
-using Logic;
-using Logic.PoolingSystem;
-using UnityEngine;
 using Zenject;
 
 namespace Bindings
@@ -25,14 +20,6 @@ namespace Bindings
             BindAssetProvider();
             BindStaticDataService();
             BindGameFactory();
-            BindCoroutineRunnerProvider();
-        }
-
-        private void BindCoroutineRunnerProvider()
-        {
-            Container.Bind<ICoroutineRunnerProvider>()
-                .To<CoroutineRunnerProvider>()
-                .AsSingle();
         }
 
         private void BindGameFactory()

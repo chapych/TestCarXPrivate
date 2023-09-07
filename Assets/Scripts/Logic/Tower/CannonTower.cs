@@ -8,7 +8,7 @@ namespace Logic.Tower
 {
 	public class CannonTower : TowerBase
 	{
-		[SerializeField] private Transform m_shootPoint;
+		[SerializeField] private Transform ShootPoint;
 		[SerializeField] private Transform Hub;
 		[SerializeField] private Transform CanonItself;
 
@@ -16,7 +16,7 @@ namespace Logic.Tower
 		{
 			var aim = CalculateAim(target.transform);
 			if(aim == null) return;
-			Vector3 relativePosition = (Vector3) aim - m_shootPoint.position;
+			Vector3 relativePosition = (Vector3) aim - ShootPoint.position;
 			Quaternion lookRotation = Quaternion.LookRotation(relativePosition);
 
 			StartCoroutine(PrepareAndShoot(lookRotation, target));
@@ -25,7 +25,7 @@ namespace Logic.Tower
 		private Vector3? CalculateAim(Transform target)
 		{
 			Vector3 position = target.position;
-			Vector3 targetRelativePosition = position - m_shootPoint.position;
+			Vector3 targetRelativePosition = position - ShootPoint.position;
 			Vector3 targetVelocity = target.GetComponent<Rigidbody>().velocity;
 
 			var solutions = QuadraticSolver.SolveWithParameters(targetVelocity.DoubleMagnitude() - Speed * Speed,
@@ -59,13 +59,13 @@ namespace Logic.Tower
 
 		private void ExtractProjectile(IDamageable target)
 		{
-			var projectile = (CannonProjectile) ProjectilePool.Get();
-			projectile.Target = target;
+			ProjectileBase projectile = ProjectilePool.Get();
+			projectile.Construct(Speed, Damage, target);
 
 			Transform projectileTransform = projectile.transform;
-			projectileTransform.position = m_shootPoint.position;
-			projectileTransform.rotation = m_shootPoint.rotation;
-			projectile.SetMovementDirection(CanonItself.forward);
+			projectileTransform.position = ShootPoint.position;
+			projectileTransform.rotation = ShootPoint.rotation;
+			projectile.GetComponent<Rigidbody>().AddForce(Speed * CanonItself.forward, ForceMode.VelocityChange);
 		}
 	}
 }

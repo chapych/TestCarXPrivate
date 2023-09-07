@@ -1,57 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Logic.PoolingSystem
 {
-    public class Pool
+    public class Pool<T> where T : MonoBehaviour, IPoolable<T>
     {
-        private readonly Func<Task<GameObject>> instantiatingAsyncFunc;
+        private readonly T m_prefab;
 
-        private Queue<IPooled> queue = new Queue<IPooled>();
+        private Queue<T> m_queue = new Queue<T>();
 
-        public Pool(Func<Task<GameObject>> instantiatingAsyncFunc)
+        public Pool(T prefab)
         {
-            this.instantiatingAsyncFunc = instantiatingAsyncFunc;
+            this.m_prefab = prefab;
         }
 
-        public IPooled Get()
+        public T Get()
         {
-            if (queue.Count == 0) AddObjects(1);
+            if (m_queue.Count == 0) AddObjects(1);
 
-            IPooled instance = queue.Dequeue();
+            T instance = m_queue.Dequeue();
             instance.gameObject.SetActive(true);
             return instance;
         }
 
-        public void ReturnToPool(IPooled instance)
+        public void ReturnToPool(T instance)
         {
             instance.gameObject.SetActive(false);
-            queue.Enqueue(instance);
+            m_queue.Enqueue(instance);
         }
 
-        public async Task AddObjects(int count)
+        public void AddObjects(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                GameObject instance = await instantiatingAsyncFunc();
-                var pooled = instance.GetComponent<IPooled>();
+                T instance = Object.Instantiate(m_prefab);
+                ReturnToPool(instance);
 
-                ReturnToPool(pooled);
-                pooled.OnFree += ReturnToPool;
-                pooled.Configure();
+                instance.GetComponent<IPoolable<T>>().OnFree += ReturnToPool;
             }
         }
 
         public void CleanUp()
         {
-            foreach (IPooled poolable in queue)
+            foreach (IPoolable<T> poolable in m_queue)
             {
                 poolable.OnFree -= ReturnToPool;
             }
-            queue.Clear();
+            m_queue.Clear();
         }
     }
 

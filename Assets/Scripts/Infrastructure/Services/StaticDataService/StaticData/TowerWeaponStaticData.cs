@@ -8,8 +8,8 @@ namespace Infrastructure.Services.StaticDataService.StaticData
     public class TowerWeaponStaticData : ScriptableObject
     {
         public WeaponType Type;
+        public AssetReferenceGameObject PrefabReference;
         public float ProjectileSpeed = 0.2f;
         public int ProjectileDamage = 10;
-        public AssetReferenceGameObject PrefabReference;
     }
 }

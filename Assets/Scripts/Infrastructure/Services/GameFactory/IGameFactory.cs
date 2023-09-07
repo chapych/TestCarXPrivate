@@ -1,20 +1,15 @@
 ﻿using System.Threading.Tasks;
 using BaseClasses.Enums;
 using Infrastructure.Services.StaticData;
-using Infrastructure.Services.StaticDataService.StaticData;
 using UnityEngine;
 
 namespace Infrastructure.Services.GameFactory
 {
     public interface IGameFactory
     {
-        Task<GameObject> CreateTower(TowerBaseType towerBaseType, WeaponType weaponType, Vector3 at, float range);
-        Task<GameObject> CreateSpawner(Vector3 at, Vector3 moveTargetPosition);
-        Task<GameObject> CreateMonster(MonsterType monsterType);
-        Task<GameObject> CreateProjectile(ProjectileType projectileType);
-        GameObject CreateTarget(Vector3 at);
-        Task<GameObject> CreateCoroutineRunner();
+        Task<GameObject> CreateTower(TowerBaseType towerBaseType, WeaponType weaponType, Vector3 at, float range,
+            float shootInterval);
+        Task<GameObject> CreateSpawner(Vector3 at, float interval, Vector3 moveTargetPosition, float speed, int maxHp);
         void CleanUp();
-        GameObject InstantiateFromPrefab(GameObject prefab);
     }
 }

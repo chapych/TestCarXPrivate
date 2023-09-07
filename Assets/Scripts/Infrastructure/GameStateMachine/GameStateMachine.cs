@@ -6,13 +6,13 @@ namespace Infrastructure.GameStateMachine
 {
     public class GameStateMachine : IGameStateMachine
     {
-        private IExitableState active;
-        private readonly Dictionary<System.Type, IExitableState> states;
+        private IExitableState m_active;
+        private readonly Dictionary<System.Type, IExitableState> m_states;
 
         public GameStateMachine(BootstrapGameState.Factory bootstrapFactory,
             LoadLevelState.Factory loadLevelFactory)
         {
-            states = new Dictionary<System.Type, IExitableState>
+            m_states = new Dictionary<System.Type, IExitableState>
             {
                 [typeof(BootstrapGameState)] = bootstrapFactory.Create(this),
                 [typeof(LoadLevelState)] = loadLevelFactory.Create(this)
@@ -21,24 +21,24 @@ namespace Infrastructure.GameStateMachine
 
         public void Enter<TState>() where TState : class, IEnteringState
         {
-            active?.Exit();
+            m_active?.Exit();
             IEnteringState state = GetState<TState>();
-            active = state;
+            m_active = state;
             state.Enter();
         }
 
         public void Enter<TState, TPayload>(TPayload payload)
             where TState : class, IPayloadedEnteringState<TPayload>
         {
-            active?.Exit();
+            m_active?.Exit();
             IPayloadedEnteringState<TPayload> state = GetState<TState>();
-            active = state;
+            m_active = state;
             state.Enter(payload);
         }
 
         private TState GetState<TState>() where TState : class
         {
-            return states[typeof(TState)] as TState;
+            return m_states[typeof(TState)] as TState;
         }
     }
 }

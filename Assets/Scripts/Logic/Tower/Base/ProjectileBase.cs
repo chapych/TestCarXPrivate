@@ -1,50 +1,51 @@
 ﻿using System;
-using BaseInterfaces;
-using BaseInterfaces.Gameplay;
 using Logic.PoolingSystem;
 using UnityEngine;
 
 namespace Logic.Tower.Base
 {
-    public abstract class ProjectileBase : MonoBehaviour, IPooled
+    public class ProjectileBase : MonoBehaviour, IPoolable<ProjectileBase>
     {
-        private TriggerObserver triggerObserver;
-        protected float m_speed;
-        protected int m_damage;
-        public IDamageable Target;
-        public event Action<IPooled> OnFree;
+        private TriggerObserver m_triggerObserver;
+        protected float Speed;
+        protected int Damage;
+        protected IDamageable Target;
+        public event Action<ProjectileBase> OnFree;
 
-        public void Construct(float speed, int damage)
+        public void Construct(float speed, int damage, IDamageable target)
         {
-            m_speed = speed;
-            m_damage = damage;
+            Speed = speed;
+            Damage = damage;
+            Target = target;
         }
-
-        public virtual void Configure()
+        
+        private void Awake()
         {
-            triggerObserver = GetComponent<TriggerObserver>();
-            triggerObserver.OnTrigger += OnTriggerHandle;
+            m_triggerObserver = GetComponent<TriggerObserver>();
+            m_triggerObserver.OnTrigger += OnTriggerHandle;
         }
 
         protected virtual void Update()
         {
-            if (Target.IsDead()) OnFreeAction(this);
+            if (Target.IsDead())
+            {
+                OnFreeAction(this);
+            }
         }
+
         private void OnTriggerHandle(GameObject other)
         {
             if(!other.TryGetComponent(out IDamageable monster))
                 return;
-            monster.GetDamage(m_damage);
+            monster.GetDamage(Damage);
             OnFree?.Invoke(this);
         }
 
         protected void OnFreeAction(ProjectileBase projectileBase) => OnFree?.Invoke(projectileBase);
 
-        public void Free() => OnFree?.Invoke(this);
-
         private void OnDestroy()
         {
-            triggerObserver.OnTrigger -= OnTriggerHandle;
+            m_triggerObserver.OnTrigger -= OnTriggerHandle;
         }
     }
 }

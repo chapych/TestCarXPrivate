@@ -13,13 +13,13 @@ namespace Infrastructure.Services.StaticData.PointsForStaticData
         public float Range;
         public float ShootInterval;
 
-        public TowerPoint(Vector3 position, TowerBaseType towerBaseType, WeaponType weaponType, float range, float shootInterval)
+        public TowerPoint(Vector3 position, TowerBaseType towerBaseType, WeaponType weaponType, float range, float shootIntreval)
         {
             WeaponType = weaponType;
             TowerBaseType = towerBaseType;
             Position = position;
             Range = range;
-            ShootInterval = shootInterval;
+            ShootInterval = shootIntreval;
         }
     }
 }

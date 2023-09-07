@@ -6,17 +6,17 @@ namespace Infrastructure.GameBootstrapper
 {
     public class GameBootstrapper : MonoBehaviour
     {
-        private Game game;
+        private Game m_game;
 
         [Inject]
         public void Construct(Game game)
         {
-            this.game = game;
+            this.m_game = game;
         }
 
         private void Awake()
         {
-            game.StateMachine.Enter<BootstrapGameState>();
+            m_game.StateMachine.Enter<BootstrapGameState>();
         }
     }
 }

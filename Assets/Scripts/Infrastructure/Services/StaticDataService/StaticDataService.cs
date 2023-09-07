@@ -11,44 +11,35 @@ namespace Infrastructure.Services.StaticDataService
 {
     public class StaticDataService : IStaticDataService
     {
-        private readonly IAssetProvider assetProvider;
+        private readonly IAssetProvider m_assetProvider;
 
-        private Dictionary<string, LevelStaticData> levelsByKey;
-        private Dictionary<TowerBaseType, TowerBaseStaticData> towerBasesByKey;
-        private Dictionary<WeaponType, TowerWeaponStaticData> towerWeaponByKey;
-        private Dictionary<MonsterType, MonsterStaticData> monsterByKey;
-        private Dictionary<ProjectileType, ProjectileStaticData> projectileByKey;
+        private Dictionary<string, LevelStaticData> m_levelsByKey;
+        private Dictionary<TowerBaseType, TowerBaseStaticData> m_towerBasesByKey;
+        private Dictionary<WeaponType, TowerWeaponStaticData> m_towerWeaponByKey;
 
-        private string staticDataKey = "StaticData";
+        private string m_staticDataKey = "StaticData";
 
         public StaticDataService(IAssetProvider assetProvider)
         {
-            this.assetProvider = assetProvider;
+            this.m_assetProvider = assetProvider;
         }
 
         public async Task Load()
         {
-            assetProvider.CleanUp();
+            m_assetProvider.CleanUp();
 
-            var levels = await assetProvider.LoadAllByKey<LevelStaticData>(staticDataKey);
-            var towerBases = await assetProvider.LoadAllByKey<TowerBaseStaticData>(staticDataKey);
-            var towerWeapons = await assetProvider.LoadAllByKey<TowerWeaponStaticData>(staticDataKey);
-            var projectiles = await assetProvider.LoadAllByKey<ProjectileStaticData>(staticDataKey);
-            var monsters = await assetProvider.LoadAllByKey<MonsterStaticData>(staticDataKey);
+            var levels = await m_assetProvider.LoadAllByKey<LevelStaticData>(m_staticDataKey);
+            var towerBases = await m_assetProvider.LoadAllByKey<TowerBaseStaticData>(m_staticDataKey);
+            var towerWeapons = await m_assetProvider.LoadAllByKey<TowerWeaponStaticData>(m_staticDataKey);
 
-            levelsByKey = levels.ToDictionary(x => x.LevelName, x => x);
-            towerBasesByKey = towerBases.ToDictionary(x => x.Type, x => x);
-            towerWeaponByKey = towerWeapons.ToDictionary(x => x.Type, x => x);
-            Debug.Log(monsters.Length);
-            monsterByKey = monsters.ToDictionary(x => x.Type, x => x);
-            projectileByKey = projectiles.ToDictionary(x => x.Type, x => x);
+            m_levelsByKey = levels.ToDictionary(x => x.LevelName, x => x);
+            m_towerBasesByKey = towerBases.ToDictionary(x => x.Type, x => x);
+            m_towerWeaponByKey = towerWeapons.ToDictionary(x => x.Type, x => x);
         }
 
-        public LevelStaticData ForLevel(string level) => levelsByKey[level];
-        public TowerBaseStaticData ForTowerBase(TowerBaseType type) => towerBasesByKey[type];
-        public TowerWeaponStaticData ForTowerWeapon(WeaponType type) => towerWeaponByKey[type];
-        public MonsterStaticData ForMonster(MonsterType monsterType) => monsterByKey[monsterType];
-        public ProjectileStaticData ForProjectile(ProjectileType projectileType) => projectileByKey[projectileType];
+        public LevelStaticData ForLevel(string level) => m_levelsByKey[level];
+        public TowerBaseStaticData ForTowerBase(TowerBaseType type) => m_towerBasesByKey[type];
+        public TowerWeaponStaticData ForTowerWeapon(WeaponType type) => m_towerWeaponByKey[type];
     }
 }
 

@@ -1,5 +1,4 @@
-﻿using BaseInterfaces.Gameplay;
-using Logic.Tower.Base;
+﻿using Logic.Tower.Base;
 using UnityEngine;
 
 namespace Logic.Tower
@@ -10,8 +9,8 @@ namespace Logic.Tower
 		{
 			base.Update();
 			Vector3 translation = Target.transform.position - transform.position;
-			if (translation.magnitude > m_speed) {
-				translation = translation.normalized * m_speed;
+			if (translation.magnitude > Speed) {
+				translation = translation.normalized * Speed;
 			}
 			transform.Translate(translation);
 		}

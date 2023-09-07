@@ -1,9 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Infrastructure.Services.AssetProviderService;
-using Infrastructure.Services.CoroutineRunner;
 using Infrastructure.Services.StaticData;
 using Infrastructure.Services.StaticDataService;
-using Logic;
 using UnityEngine;
 using Zenject;
 
@@ -13,31 +11,27 @@ namespace Infrastructure.GameStateMachine.States
     {
         private const string LEVEL_NAME = "ForTest";
 
-        private readonly IGameStateMachine stateMachine;
-        private readonly IStaticDataService staticDataService;
-        private readonly IAssetProvider assetProvider;
-        private readonly ICoroutineRunnerProvider coroutineRunnerProvider;
+        private readonly IGameStateMachine m_stateMachine;
+        private readonly IStaticDataService m_staticDataService;
+        private readonly IAssetProvider m_assetProvider;
 
-        public BootstrapGameState(IGameStateMachine stateMachine, IStaticDataService staticDataService,
-            IAssetProvider assetProvider, ICoroutineRunnerProvider coroutineRunnerProvider)
+        public BootstrapGameState(IGameStateMachine stateMachine, IStaticDataService staticDataService, IAssetProvider assetProvider)
         {
-            this.stateMachine = stateMachine;
-            this.staticDataService = staticDataService;
-            this.assetProvider = assetProvider;
-            this.coroutineRunnerProvider = coroutineRunnerProvider;
+            this.m_stateMachine = stateMachine;
+            this.m_staticDataService = staticDataService;
+            this.m_assetProvider = assetProvider;
         }
 
         private async Task InitialiseServices()
         {
-            assetProvider.Initialise();
-            await coroutineRunnerProvider.Initialise();
-            await staticDataService.Load();
+            m_assetProvider.Initialise();
+            await m_staticDataService.Load();
 
         }
         public async Task Enter()
         {
             await InitialiseServices();
-            stateMachine.Enter<LoadLevelState, string>(LEVEL_NAME);
+            m_stateMachine.Enter<LoadLevelState, string>(LEVEL_NAME);
         }
 
         public void Exit()
